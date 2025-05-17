@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pi Visualization Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <div class="floating-pi" id="floating-pi-container"></div>
+    
+    <div class="sidebar">
+      <div class="logo">
+        <h1>π Gallery</h1>
+        <div class="subtitle">Visualizing the infinite</div>
+      </div>
+      
+      <div class="controls">
+        <h2>Visualizations</h2>
+        <div class="viz-buttons">
+          <button id="grid-viz" class="viz-button active" data-viz="grid">
+            <span class="viz-icon">◙</span>
+            <span class="viz-label">Digit Grid</span>
+          </button>
+          <button id="spiral-viz" class="viz-button" data-viz="spiral">
+            <span class="viz-icon">↻</span>
+            <span class="viz-label">Circular Spiral</span>
+          </button>
+          <button id="walk-viz" class="viz-button" data-viz="walk">
+            <span class="viz-icon">⇝</span>
+            <span class="viz-label">Random Walk</span>
+          </button>
+        </div>
+
+        <div class="digit-controls">
+          <h2>Pi Digits</h2>
+          <div id="digit-count"><span id="current-digits">1000</span> digits loaded</div>
+          <button id="continue-digits" class="action-button">Continue to 5000</button>
+          <button id="reset-walk" class="action-button" disabled>Reset Walk</button>
+        </div>
+      </div>
+      
+      <div class="info-panel">
+        <div class="fact-container">
+          <h2>Pi Facts</h2>
+          <div id="pi-fact" class="pi-fact">
+            Pi (π) is the ratio of a circle's circumference to its diameter.
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <p>Created by Parthivkoli</p>
+      </footer>
+    </div>
+    
+    <main class="visualization-container">
+      <div id="loading-screen">
+        <div class="spinner">π</div>
+        <div class="loading-text">Loading...</div>
+      </div>
+      <div id="canvas-container"></div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/pi-digits.js"></script>
+  <script src="js/visualizations/grid.js"></script>
+  <script src="js/visualizations/spiral.js"></script>
+  <script src="js/visualizations/walk.js"></script>
+  <script src="js/components/facts.js"></script>
+  <script src="js/components/floating-pi.js"></script>
+  <script src="js/components/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
