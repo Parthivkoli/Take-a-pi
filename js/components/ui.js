@@ -10,13 +10,16 @@ const UI = (function() {
     continueButton: null,
     resetWalkButton: null,
     digitCountElement: null,
-    loadingScreen: null
+    loadingScreen: null,
+    sidebar: null,
+    mobileMenuButton: null
   };
   
   // Current state
   let state = {
     currentVisualization: 'grid',
-    isLoading: false
+    isLoading: false,
+    isMobileMenuOpen: false
   };
   
   // Initialize UI components
@@ -27,6 +30,10 @@ const UI = (function() {
     elements.resetWalkButton = document.getElementById('reset-walk');
     elements.digitCountElement = document.getElementById('current-digits');
     elements.loadingScreen = document.getElementById('loading-screen');
+    elements.sidebar = document.querySelector('.sidebar');
+    
+    // Create and add mobile menu button
+    createMobileMenuButton();
     
     // Set up event listeners
     elements.visualizationButtons.forEach(button => {
@@ -36,8 +43,36 @@ const UI = (function() {
     elements.continueButton.addEventListener('click', handleContinueDigits);
     elements.resetWalkButton.addEventListener('click', handleResetWalk);
     
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (state.isMobileMenuOpen && 
+          !elements.sidebar.contains(e.target) && 
+          !elements.mobileMenuButton.contains(e.target)) {
+        toggleMobileMenu(false);
+      }
+    });
+    
     // Update UI based on initial state
     updateUI();
+  }
+  
+  // Create mobile menu button
+  function createMobileMenuButton() {
+    const button = document.createElement('button');
+    button.className = 'mobile-menu-button';
+    button.innerHTML = '<span></span>';
+    button.addEventListener('click', () => toggleMobileMenu());
+    
+    document.body.appendChild(button);
+    elements.mobileMenuButton = button;
+  }
+  
+  // Toggle mobile menu
+  function toggleMobileMenu(force) {
+    state.isMobileMenuOpen = typeof force === 'boolean' ? force : !state.isMobileMenuOpen;
+    
+    elements.sidebar.classList.toggle('active', state.isMobileMenuOpen);
+    elements.mobileMenuButton.classList.toggle('active', state.isMobileMenuOpen);
   }
   
   // Handle visualization change
@@ -49,6 +84,11 @@ const UI = (function() {
     
     // Update state
     state.currentVisualization = vizType;
+    
+    // Close mobile menu if open
+    if (state.isMobileMenuOpen) {
+      toggleMobileMenu(false);
+    }
     
     // Update button states
     updateUI();
@@ -112,16 +152,44 @@ const UI = (function() {
     }
   }
   
-  // Update digit count display
+  // Update digit count display with animation
   function updateDigitCount(count) {
     if (elements.digitCountElement) {
-      elements.digitCountElement.textContent = count;
+      const currentCount = parseInt(elements.digitCountElement.textContent);
+      animateNumber(currentCount, count, 1000, (value) => {
+        elements.digitCountElement.textContent = Math.round(value);
+      });
     }
     
     // Disable continue button if we have 5000 digits
     if (elements.continueButton && count >= 5000) {
       elements.continueButton.disabled = true;
     }
+  }
+  
+  // Animate number change
+  function animateNumber(start, end, duration, callback) {
+    const startTime = performance.now();
+    const change = end - start;
+    
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      const value = start + change * easeOutQuad(progress);
+      callback(value);
+      
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+    
+    requestAnimationFrame(update);
+  }
+  
+  // Easing function
+  function easeOutQuad(t) {
+    return t * (2 - t);
   }
   
   // Clean up resources
@@ -133,6 +201,10 @@ const UI = (function() {
     
     elements.continueButton.removeEventListener('click', handleContinueDigits);
     elements.resetWalkButton.removeEventListener('click', handleResetWalk);
+    
+    if (elements.mobileMenuButton) {
+      elements.mobileMenuButton.remove();
+    }
   }
   
   // Public API
